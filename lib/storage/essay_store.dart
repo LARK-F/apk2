@@ -26,7 +26,7 @@ class EssayStore {
   Future<List<Essay>> loadAll() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_kKey);
-    if (raw == null || raw.isEmpty) return const [];
+    if (raw == null || raw.isEmpty) return <Essay>[];
     final List<dynamic> list = jsonDecode(raw) as List<dynamic>;
     return list.map((e) => Essay.fromJson(e as Map<String, dynamic>)).toList();
   }
@@ -49,7 +49,7 @@ class EssayStore {
 
   /// 保存或更新某一天的随笔。空白页（无文本、无图片）不写入。
   Future<void> upsert(Essay essay) async {
-    final list = await loadAll();
+    final list = List<Essay>.from(await loadAll());
     final i = list.indexWhere((e) => e.dateKey == essay.dateKey);
     if (essay.isEmpty) {
       // 空白页：若已有存档则删除，若原本就没有则忽略。
